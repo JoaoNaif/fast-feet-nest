@@ -1,0 +1,13 @@
+services:
+  postgres:
+    container_name: fast-feet-nest-pg
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: fast-feet
+      PGDATA: /data/postgres
+    volumes:
+      - ./data/pg:/data/postgres

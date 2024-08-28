@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model Deliveryman {
+  id        String   @id @default(uuid())
+  cpf       String   @unique
+  name      String
+  password  String
+  role      Role     @default(MEMBER)
+  latitude  Decimal
+  longitude Decimal
+  createdAt DateTime @default(now()) @map("created_at")
+
+  order Order[]
+
+  @@map("deliverymans")
+}
+
+model Recipient {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  address   String
+  uf        String
+  city      String
+  cep       Int
+  number    Int
+  latitude  Decimal
+  longitude Decimal
+  createdAt DateTime @default(now()) @map("created_at")
+
+  order        Order[]
+  notification Notification[]
+
+  @@map("recipients")
+}
+
+model Order {
+  id            String    @id @default(uuid())
+  recipientId   String    @map("recipient_id")
+  deliverymanId String?   @map("deliveryman_id")
+  status        String
+  createdAt     DateTime  @default(now()) @map("created_at")
+  removeIn      DateTime? @map("remove_in")
+  deliveredTo   DateTime? @map("delivered_to")
+
+  recipient   Recipient    @relation(fields: [recipientId], references: [id])
+  deliveryman Deliveryman? @relation(fields: [deliverymanId], references: [id])
+  attachment  Attachment[]
+
+  @@map("orders")
+}
+
+model Attachment {
+  id      String  @id @default(uuid())
+  title   String
+  url     String
+  orderId String? @map("order_id")
+
+  order Order? @relation(fields: [orderId], references: [id])
+
+  @@map("attachments")
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  recipientId String    @map("recipient_id")
+  title       String
+  content     String
+  readAt      DateTime? @map("read_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  recipient Recipient @relation(fields: [recipientId], references: [id])
+
+  @@map("notifications")
+}
