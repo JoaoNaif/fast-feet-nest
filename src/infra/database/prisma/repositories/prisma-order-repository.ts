@@ -5,11 +5,13 @@ import { Injectable } from '@nestjs/common'
 import { PrismaOrderMapper } from '../mappers/prisma-order-mapper'
 import { OrderAttachmentRepository } from '@/domain/main/application/repositories/order-attachment-repository'
 import { DomainEvents } from '@/core/events/domain-events'
+import { CacheRepository } from '@/infra/cache/cache-repository'
 
 @Injectable()
 export class PrismaOrderRepository implements OrderRepository {
   constructor(
     private prisma: PrismaService,
+    private cache: CacheRepository,
     private orderAttachmentRepository: OrderAttachmentRepository,
   ) {}
 
@@ -42,6 +44,37 @@ export class PrismaOrderRepository implements OrderRepository {
     return orders.map(PrismaOrderMapper.toDomain)
   }
 
+  async findManyDeliveries(
+    deliverymanId: string,
+    page: number,
+  ): Promise<Order[]> {
+    const cacheKey = `orders:${deliverymanId}:deliveries:page:${page}`
+    // const cacheTTL = 60 * 60 // Define TTL de 1 hora
+
+    const cacheHit = await this.cache.get(cacheKey)
+
+    if (cacheHit) {
+      const cachedOrders = JSON.parse(cacheHit)
+
+      const orderDeliveries = cachedOrders.map(PrismaOrderMapper.toDomain)
+      return orderDeliveries
+    }
+
+    const orders = await this.prisma.order.findMany({
+      where: {
+        deliverymanId,
+      },
+      skip: (page - 1) * 20,
+      take: 20,
+    })
+
+    await this.cache.set(cacheKey, JSON.stringify(orders))
+
+    const orderDeliveries = orders.map(PrismaOrderMapper.toDomain)
+
+    return orderDeliveries
+  }
+
   async save(order: Order): Promise<void> {
     const data = PrismaOrderMapper.toPrisma(order)
 
@@ -55,6 +88,10 @@ export class PrismaOrderRepository implements OrderRepository {
     if (order.attachment) {
       await this.orderAttachmentRepository.create(order.attachment)
     }
+
+    const cacheKey = `orders:${order.deliverymanId}:deliveries:*`
+
+    await this.cache.delete(cacheKey)
 
     DomainEvents.dispatchEventsForAggregate(order.id)
   }

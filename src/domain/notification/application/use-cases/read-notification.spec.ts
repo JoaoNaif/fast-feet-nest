@@ -7,7 +7,7 @@ import { UnauthorizedError } from '@/core/errors/errors/unauthorized-error'
 let inMemoryNotificationRepository: InMemoryNotificationsRepository
 let sut: ReadNotificationUseCase
 
-describe('Send Notification', () => {
+describe('Read Notification', () => {
   beforeEach(() => {
     inMemoryNotificationRepository = new InMemoryNotificationsRepository()
     sut = new ReadNotificationUseCase(inMemoryNotificationRepository)

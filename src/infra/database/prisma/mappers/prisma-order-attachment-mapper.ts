@@ -18,14 +18,17 @@ export class PrismaOrderAttachmentMapper {
   }
 
   static toPrismaUpdate(
-    attachment: OrderAttachment,
+    orderAttachment: OrderAttachment,
   ): Prisma.AttachmentUpdateArgs {
+    const attachmentId = orderAttachment.attachmentId.toString()
     return {
       where: {
-        id: attachment.attachmentId.toString(),
+        id: attachmentId,
       },
       data: {
-        orderId: attachment.orderId.toString(),
+        order: {
+          connect: { id: orderAttachment.orderId.toString() },
+        },
       },
     }
   }

@@ -5,6 +5,7 @@ import { OrderRepository } from '../repositories/order-repository'
 import { Order } from '../../enterprise/entities/order'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { OrderAlreadyPickedUpError } from './errors/order-already-picked-up-error'
+import { Injectable } from '@nestjs/common'
 
 interface WithdrawOrderUseCaseRequest {
   deliverymanId: string
@@ -18,6 +19,7 @@ type WithdrawOrderUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class WithdrawOrderUseCase {
   constructor(
     private orderRepository: OrderRepository,
@@ -40,7 +42,10 @@ export class WithdrawOrderUseCase {
       return left(new ResourceNotFoundError())
     }
 
-    if (order.deliverymanId !== undefined && order.removeIn !== undefined) {
+    if (
+      order.deliverymanId === new UniqueEntityId() &&
+      order.removeIn === new Date()
+    ) {
       return left(new OrderAlreadyPickedUpError())
     }
 

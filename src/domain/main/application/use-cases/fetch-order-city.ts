@@ -4,13 +4,8 @@ import { RecipientRepository } from '../repositories/recipient-repository'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { NoUpcomingDeliveryError } from './errors/no-upcoming-delivey-error'
 import { OrderRepository } from '../repositories/order-repository'
-import { Order } from '../../enterprise/entities/order'
-import { Recipient } from '../../enterprise/entities/recipient'
-
-interface FetchCityProps {
-  orders: Order[]
-  recipientNearby: Recipient[]
-}
+import { Injectable } from '@nestjs/common'
+import { FetchProps } from './types/fetchProps'
 
 interface FetchOrderCityUseCaseRequest {
   deliverymanId: string
@@ -21,10 +16,11 @@ interface FetchOrderCityUseCaseRequest {
 type FetchOrderCityUseCaseResponse = Either<
   ResourceNotFoundError | NoUpcomingDeliveryError,
   {
-    deliveries: FetchCityProps
+    deliveries: FetchProps
   }
 >
 
+@Injectable()
 export class FetchOrderCityUseCase {
   constructor(
     private recipientRepository: RecipientRepository,

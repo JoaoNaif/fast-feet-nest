@@ -12,8 +12,10 @@ import { RecipientRepository } from '@/domain/main/application/repositories/reci
 import { PrismaRecipientRepository } from './prisma/repositories/prisma-recipient-repository'
 import { NotificationRepository } from '@/domain/notification/application/repositories/notification-repository'
 import { PrismaNotificationRepository } from './prisma/repositories/prisma-notification-repository'
+import { CacheModule } from '../cache/cache.module'
 
 @Module({
+  imports: [CacheModule],
   providers: [
     PrismaService,
     {

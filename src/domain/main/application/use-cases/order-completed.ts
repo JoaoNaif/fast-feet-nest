@@ -5,6 +5,7 @@ import { OrderRepository } from '../repositories/order-repository'
 import { Order } from '../../enterprise/entities/order'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { OrderAttachment } from '../../enterprise/entities/order-attachment'
+import { Injectable } from '@nestjs/common'
 
 interface OrderCompletedUseCaseRequest {
   deliverymanId: string
@@ -19,6 +20,7 @@ type OrderCompletedUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class OrderCompletedUseCase {
   constructor(
     private orderRepository: OrderRepository,

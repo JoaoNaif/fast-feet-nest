@@ -3,6 +3,7 @@ import { DeliverymanRepository } from '../repositories/deliveryman-repository'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { UnauthorizedError } from '@/core/errors/errors/unauthorized-error'
 import { OrderRepository } from '../repositories/order-repository'
+import { Injectable } from '@nestjs/common'
 
 interface DeleteOrderUseCaseRequest {
   adminId: string
@@ -14,6 +15,7 @@ type DeleteOrderUseCaseResponse = Either<
   null
 >
 
+@Injectable()
 export class DeleteOrderUseCase {
   constructor(
     private orderRepository: OrderRepository,

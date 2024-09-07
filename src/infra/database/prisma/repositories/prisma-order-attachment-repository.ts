@@ -2,16 +2,20 @@ import { OrderAttachmentRepository } from '@/domain/main/application/repositorie
 import { PrismaService } from '../prisma.service'
 import { OrderAttachment } from '@/domain/main/enterprise/entities/order-attachment'
 import { PrismaOrderAttachmentMapper } from '../mappers/prisma-order-attachment-mapper'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class PrismaOrderAttachmentRepository
   implements OrderAttachmentRepository
 {
   constructor(private prisma: PrismaService) {}
 
-  async create(attachment: OrderAttachment): Promise<void> {
-    const data = PrismaOrderAttachmentMapper.toPrismaUpdate(attachment)
+  async create(orderAttachment: OrderAttachment): Promise<void> {
+    if (orderAttachment) {
+      const data = PrismaOrderAttachmentMapper.toPrismaUpdate(orderAttachment)
 
-    await this.prisma.attachment.update(data)
+      await this.prisma.attachment.update(data)
+    }
   }
 
   async delete(attachment: OrderAttachment): Promise<void> {

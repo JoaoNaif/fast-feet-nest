@@ -5,6 +5,7 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import { UnauthorizedError } from '@/core/errors/errors/unauthorized-error'
 import { Recipient } from '../../enterprise/entities/recipient'
 import { RecipientAlreadyExistError } from './errors/recipient-already-exist-error'
+import { Injectable } from '@nestjs/common'
 
 interface CreateRecipientUseCaseRequest {
   adminId: string
@@ -26,6 +27,7 @@ type CreateRecipientUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class CreateRecipientUseCase {
   constructor(
     private recipientRepository: RecipientRepository,

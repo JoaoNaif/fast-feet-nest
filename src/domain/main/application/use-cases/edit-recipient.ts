@@ -5,15 +5,16 @@ import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-e
 import { UnauthorizedError } from '@/core/errors/errors/unauthorized-error'
 import { RecipientAlreadyExistError } from './errors/recipient-already-exist-error'
 import { Recipient } from '../../enterprise/entities/recipient'
+import { Injectable } from '@nestjs/common'
 
 interface EditRecipientUseCaseRequest {
   adminId: string
   recipientId: string
-  name: string
-  address: string
-  cep: number
-  latitude: number
-  longitude: number
+  name?: string | null
+  address?: string | null
+  cep?: number | null
+  latitude?: number | null
+  longitude?: number | null
 }
 
 type EditRecipientUseCaseResponse = Either<
@@ -23,6 +24,7 @@ type EditRecipientUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class EditRecipientUseCase {
   constructor(
     private recipientRepository: RecipientRepository,
@@ -54,11 +56,11 @@ export class EditRecipientUseCase {
       return left(new ResourceNotFoundError())
     }
 
-    recipient.name = name
-    recipient.address = address
-    recipient.cep = cep
-    recipient.latitude = latitude
-    recipient.longitude = longitude
+    recipient.name = name ?? recipient.name
+    recipient.address = address ?? recipient.address
+    recipient.cep = cep ?? recipient.cep
+    recipient.latitude = latitude ?? recipient.latitude
+    recipient.longitude = longitude ?? recipient.longitude
 
     await this.recipientRepository.save(recipient)
 

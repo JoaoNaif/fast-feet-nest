@@ -3,13 +3,14 @@ import { Deliveryman } from '../../enterprise/entities/deliveryman'
 import { HashGenerator } from '../cryptography/hash-generator'
 import { DeliverymanRepository } from '../repositories/deliveryman-repository'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import { Injectable } from '@nestjs/common'
 
 interface EditDeliverymanUseCaseRequest {
   id: string
-  name: string
-  password: string
-  latitude: number
-  longitude: number
+  name?: string | null
+  password?: string | null
+  latitude?: number | null
+  longitude?: number | null
 }
 
 type EditDeliverymanUseCaseResponse = Either<
@@ -19,6 +20,7 @@ type EditDeliverymanUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class EditDeliverymanUseCase {
   constructor(
     private deliverymanRepository: DeliverymanRepository,
@@ -38,12 +40,14 @@ export class EditDeliverymanUseCase {
       return left(new ResourceNotFoundError())
     }
 
-    const hashedPassword = await this.hashGenerator.hash(password)
+    const hashedPassword = await this.hashGenerator.hash(
+      password ?? deliveryman.password,
+    )
 
-    deliveryman.name = name
+    deliveryman.name = name ?? deliveryman.name
     deliveryman.password = hashedPassword
-    deliveryman.latitude = latitude
-    deliveryman.longitude = longitude
+    deliveryman.latitude = latitude ?? deliveryman.latitude
+    deliveryman.longitude = longitude ?? deliveryman.longitude
 
     await this.deliverymanRepository.save(deliveryman)
 

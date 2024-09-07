@@ -3,7 +3,10 @@ import {
   Recipient,
   RecipientProps,
 } from '@/domain/main/enterprise/entities/recipient'
+import { PrismaRecipientMapper } from '@/infra/database/prisma/mappers/prisma-recipient-mapper'
+import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { faker } from '@faker-js/faker'
+import { Injectable } from '@nestjs/common'
 
 export function makeRecipient(
   override: Partial<RecipientProps> = {},
@@ -16,7 +19,7 @@ export function makeRecipient(
       address: faker.location.streetAddress(),
       city: faker.location.city(),
       cep: 23179293,
-      number: faker.number.int(),
+      number: 2143,
       uf: 'SP',
       latitude: faker.location.latitude(),
       longitude: faker.location.longitude(),
@@ -26,4 +29,21 @@ export function makeRecipient(
   )
 
   return recipient
+}
+
+@Injectable()
+export class RecipientFactory {
+  constructor(private prisma: PrismaService) {}
+
+  async makePrismaRecipient(
+    data: Partial<RecipientProps> = {},
+  ): Promise<Recipient> {
+    const recipient = makeRecipient(data)
+
+    await this.prisma.recipient.create({
+      data: PrismaRecipientMapper.toPrisma(recipient),
+    })
+
+    return recipient
+  }
 }

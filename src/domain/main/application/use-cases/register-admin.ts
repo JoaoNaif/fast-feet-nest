@@ -4,6 +4,7 @@ import { Deliveryman } from '../../enterprise/entities/deliveryman'
 import { AdminAlreadyExistError } from './errors/admin-already-exist-error'
 import { DeliverymanRepository } from '../repositories/deliveryman-repository'
 import { Cpf } from '../../enterprise/entities/value-objects/cpf'
+import { Injectable } from '@nestjs/common'
 
 interface RegisterAdminUseCaseRequest {
   name: string
@@ -20,6 +21,7 @@ type RegisterAdminUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class RegisterAdminUseCase {
   constructor(
     private adminRepository: DeliverymanRepository,

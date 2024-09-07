@@ -14,9 +14,18 @@ describe('Delete Deliveryman', () => {
   })
 
   it('should be able to edit a deliveryman', async () => {
-    const newDeliveryman = makeDeliveryman(
+    const admin = makeDeliveryman(
       {
         role: 'ADMIN',
+      },
+      new UniqueEntityId('admin-1'),
+    )
+
+    await inMemoryDeliverymanRepository.create(admin)
+
+    const newDeliveryman = makeDeliveryman(
+      {
+        role: 'MEMBER',
       },
       new UniqueEntityId('deliveryman-1'),
     )
@@ -24,10 +33,11 @@ describe('Delete Deliveryman', () => {
     await inMemoryDeliverymanRepository.create(newDeliveryman)
 
     await sut.execute({
+      adminId: 'admin-1',
       id: 'deliveryman-1',
     })
 
-    expect(inMemoryDeliverymanRepository.items).toHaveLength(0)
+    expect(inMemoryDeliverymanRepository.items).toHaveLength(1)
   })
 
   it('only an admin should be able to delete a record', async () => {
@@ -41,6 +51,7 @@ describe('Delete Deliveryman', () => {
     await inMemoryDeliverymanRepository.create(newDeliveryman)
 
     const result = await sut.execute({
+      adminId: 'deliveryman-1',
       id: 'deliveryman-1',
     })
 

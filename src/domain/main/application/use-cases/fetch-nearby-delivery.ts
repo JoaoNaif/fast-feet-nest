@@ -6,6 +6,7 @@ import { NoUpcomingDeliveryError } from './errors/no-upcoming-delivey-error'
 import { OrderRepository } from '../repositories/order-repository'
 import { Order } from '../../enterprise/entities/order'
 import { Recipient } from '../../enterprise/entities/recipient'
+import { Injectable } from '@nestjs/common'
 
 interface FetchNearbyProps {
   orders: Order[]
@@ -24,6 +25,7 @@ type FetchNearbyDeliveryUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class FetchNearbyDeliveryUseCase {
   constructor(
     private recipientRepository: RecipientRepository,

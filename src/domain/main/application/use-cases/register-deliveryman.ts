@@ -4,6 +4,7 @@ import { HashGenerator } from '../cryptography/hash-generator'
 import { DeliverymanRepository } from '../repositories/deliveryman-repository'
 import { DeliverymanAlreadyExistError } from './errors/deliveryman-already-exist-error'
 import { Cpf } from '../../enterprise/entities/value-objects/cpf'
+import { Injectable } from '@nestjs/common'
 
 interface RegisterDeliverymanUseCaseRequest {
   name: string
@@ -20,6 +21,7 @@ type RegisterDeliverymanUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class RegisterDeliverymanUseCase {
   constructor(
     private deliverymanRepository: DeliverymanRepository,

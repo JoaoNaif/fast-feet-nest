@@ -4,6 +4,7 @@ import { RecipientRepository } from '../repositories/recipient-repository'
 import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { UnauthorizedError } from '@/core/errors/errors/unauthorized-error'
 import { RecipientAlreadyExistError } from './errors/recipient-already-exist-error'
+import { Injectable } from '@nestjs/common'
 
 interface DeleteRecipientUseCaseRequest {
   adminId: string
@@ -15,6 +16,7 @@ type DeleteRecipientUseCaseResponse = Either<
   null
 >
 
+@Injectable()
 export class DeleteRecipientUseCase {
   constructor(
     private recipientRepository: RecipientRepository,

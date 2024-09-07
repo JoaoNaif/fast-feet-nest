@@ -6,6 +6,7 @@ import { UnauthorizedError } from '@/core/errors/errors/unauthorized-error'
 import { OrderRepository } from '../repositories/order-repository'
 import { Order } from '../../enterprise/entities/order'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { Injectable } from '@nestjs/common'
 
 interface CreateOrderUseCaseRequest {
   adminId: string
@@ -19,6 +20,7 @@ type CreateOrderUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class CreateOrderUseCase {
   constructor(
     private orderRepository: OrderRepository,
